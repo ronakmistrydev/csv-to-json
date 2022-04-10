@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@mui/material": "^5.6.0",
     "csvtojson": "^2.0.10",
     "multiparty": "^4.2.3",
     "next": "12.1.4",

@@ -1,6 +1,12 @@
 import { Blob } from 'buffer';
 import { useState } from 'react';
 import JSONPretty from 'react-json-pretty';
+import { Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+const Input = styled('input')({
+    display: 'none',
+});
 
 function HomePage() {
  const [file, setFile] = useState<Blob>();
@@ -26,20 +32,30 @@ function HomePage() {
   return (
       <div>
         <form onSubmit={handleOnSubmit}>
-            <input
-                type='file'
-                accept='text/csv'
-                name='file'
-                onChange={handleFileOnChange}
-            />
+            <label htmlFor='contained-button-file'>
+                <Input
+                    accept='text/csv'
+                    id='contained-button-file'
+                    multiple
+                    onChange={handleFileOnChange}
+                    type='file'
+                />
+                <Button variant='contained' component='span'>
+                    Upload CSV
+                </Button>
+            </label>
 
-            <button type='submit'>
+            <Button
+                type='submit'
+                variant='outlined'
+                color='secondary'
+            >
                 Submit
-            </button>
+            </Button>
         </form>
           {
               convertedJson && (
-                  <JSONPretty id="json-pretty" data={convertedJson} />
+                  <JSONPretty id='json-pretty' data={convertedJson} />
               )
           }
       </div>
