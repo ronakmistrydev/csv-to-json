@@ -1,21 +1,22 @@
-import {useState} from "react";
-import {Blob} from "buffer";
+import { Blob } from 'buffer';
+import { useState } from 'react';
+import JSONPretty from 'react-json-pretty';
 
 function HomePage() {
  const [file, setFile] = useState<Blob>();
+ const [convertedJson, setConvertedJson] = useState(null);
 
   const handleOnSubmit = async (e) => {
       e.preventDefault();
       const data = new FormData();
       // @ts-ignore
       data.append('file', file as Blob);
+      const response = await fetch('/api/csv-to-json',
+          { method: 'POST', body: data })
+          .then((data) => data.json())
 
-      const response = await fetch('/api/csv-to-json', {
-          method: 'POST',
-          body: data,
-      })
-
-      console.log({ data });
+      setConvertedJson(response);
+      e.target.reset();
   }
 
   const handleFileOnChange = (e) => {
@@ -36,6 +37,11 @@ function HomePage() {
                 Submit
             </button>
         </form>
+          {
+              convertedJson && (
+                  <JSONPretty id="json-pretty" data={convertedJson} />
+              )
+          }
       </div>
   )
 }
