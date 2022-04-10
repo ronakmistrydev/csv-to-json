@@ -1,34 +1,27 @@
-import middleware from '../../middleware/middleware'
-import nextConnect from 'next-connect'
+import nextConnect from 'next-connect';
 import csvToJson from 'csvtojson';
-const fs = require('fs').promises;
+import * as fs from 'fs';
+import { MultiPartMiddleware } from '../../core';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-const handler = nextConnect()
-handler.use(middleware)
+const FS = fs.promises;
 
-handler.post(async (req, res) => {
-    console.log(req.body)
-    console.log(req.files)
+type Data = Record<string, any> | Record<string, any>[];
 
-    const csvFilePath = req.files.file[0].path;
-
-    let payload = []
-    await csvToJson()
-        .fromFile(csvFilePath)
-        .then(function(jsonArrayObj){ //when parse finished, result will be emitted here.
-            payload = jsonArrayObj;
-        })
-
-    await fs.unlink(csvFilePath);
-
-    res.status(200).json({ payload })
-    //...
-})
-
-export const config = {
-    api: {
-        bodyParser: false
-    }
+interface MulterRequest extends NextApiRequest {
+    files: any;
 }
+
+const handler = nextConnect();
+handler.use(MultiPartMiddleware);
+
+handler.post(async (request: MulterRequest, response: NextApiResponse<Data>) => {
+    const csvFilePath = request.files.file[0].path;
+    const data = await csvToJson().fromFile(csvFilePath);
+    await FS.unlink(csvFilePath);
+    response.status(200).json({ ...data });
+});
+
+export const config = { api: { bodyParser: false } };
 
 export default handler
