@@ -76,18 +76,6 @@ function HomePage() {
                                   <Button variant='contained' component='span'>
                                       Upload CSV
                                   </Button>
-                                  {
-                                      file && (
-                                          <Typography
-                                              sx={{
-                                                  display: 'inline-block',
-                                                  marginLeft: 2,
-                                              }}
-                                          >
-                                              {file.name}
-                                          </Typography>
-                                      )
-                                  }
                               </label>
                           </Grid>
                           <Grid
