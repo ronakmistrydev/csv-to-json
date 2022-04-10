@@ -1,8 +1,8 @@
 import { Blob } from 'buffer';
+import { Box, Button, Container, Grid, Paper, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import JSONPretty from 'react-json-pretty';
-import {Box, Button, Card, CardActions, CardContent, Container, Grid, Paper, Typography} from '@mui/material';
-import { styled } from '@mui/material/styles';
 
 const Input = styled('input')({
     display: 'none',
@@ -12,31 +12,32 @@ function HomePage() {
  const [file, setFile] = useState<Blob>();
  const [convertedJson, setConvertedJson] = useState(null);
 
-  const handleOnSubmit = async (e) => {
-      e.preventDefault();
+    //TODO:: Define type
+    const handleOnSubmit = async (event: any) => {
+      event.preventDefault();
       const data = new FormData();
       // @ts-ignore
       data.append('file', file as Blob);
-      const response = await fetch('/api/csv-to-json',
-          { method: 'POST', body: data })
+
+      const response = await fetch('/api/csv-to-json', { method: 'POST', body: data })
           .then((data) => data.json())
 
       setConvertedJson(response);
-      e.target.reset();
-  }
+      event.target.reset();
+    }
 
-  const handleFileOnChange = (e) => {
-      setFile(e.target.files[0]);
-  }
+    //TODO:: Define type
+    const handleFileOnChange = (event: any) => {
+      setFile(event.target.files[0]);
+    }
 
-  return (
+    return (
       <Box
+          py={4}
           sx={{
               backgroundColor: 'text.secondary',
-              height: '100vh',
+              minHeight: '100vh',
               width: '100vw',
-              display: 'flex',
-              alignItems: 'center'
           }}
       >
           <Container maxWidth='md'>
@@ -89,7 +90,13 @@ function HomePage() {
                                   }
                               </label>
                           </Grid>
-                          <Grid item xs>
+                          <Grid
+                              item
+                              xs
+                              sx={{
+                                  display: 'flex',
+                                  justifyContent: 'end'
+                              }}>
                               <Button
                                   type='submit'
                                   variant='outlined'
@@ -101,14 +108,23 @@ function HomePage() {
                       </Grid>
                   </form>
               </Paper>
+
               {
                   convertedJson && (
-                      <JSONPretty id='json-pretty' data={convertedJson} />
+                      <Paper
+                          sx={{
+                              overflow: 'scroll',
+                              marginTop: 2,
+                              padding: 2,
+                          }}
+                      >
+                          <JSONPretty id='json-pretty' data={convertedJson} />
+                      </Paper>
                   )
               }
           </Container>
       </Box>
-  )
+    )
 }
 
 export default HomePage;
