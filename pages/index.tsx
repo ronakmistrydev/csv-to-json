@@ -9,6 +9,7 @@ const Input = styled('input')({
 });
 
 function HomePage() {
+ const MAX_FILE_SIZE = 2; //MB
  const [file, setFile] = useState<Blob>();
  const [convertedJson, setConvertedJson] = useState(null);
 
@@ -26,8 +27,12 @@ function HomePage() {
       event.target.reset();
     }
 
+    const bytesToMegaByte = (bytes: number) => (bytes/1024)/1024;
+
     //TODO:: Define type
     const handleFileOnChange = (event: any) => {
+      const fileSize = event.target.files[0].size;
+      if (bytesToMegaByte(fileSize) > MAX_FILE_SIZE) alert('File size should not be greater then 2 MB :( ');
       setFile(event.target.files[0]);
     }
 
