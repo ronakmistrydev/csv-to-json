@@ -24,6 +24,7 @@ function HomePage() {
 
       const response = await fetch('/api/csv-to-json', { method: 'POST', body: data })
           .then((data) => data.json())
+          .catch(error => {  alert(error.message); });
 
       setConvertedJson(response);
       event.target.reset();
