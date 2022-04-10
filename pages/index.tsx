@@ -1,7 +1,7 @@
 import { Blob } from 'buffer';
-import { Box, Button, Container, Grid, Paper, Typography } from '@mui/material';
+import {Box, Button, Container, Grid, Paper, Typography} from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { useState } from 'react';
+import {ChangeEvent, useState} from 'react';
 import JSONPretty from 'react-json-pretty';
 
 const Input = styled('input')({
@@ -10,9 +10,15 @@ const Input = styled('input')({
 
 const bytesToMegaByte = (bytes: number) => (bytes/1024)/1024;
 
+const copyToClipBoard = async (data: any) => {
+    const text = JSON.stringify(data);
+    if ('clipboard' in navigator) await navigator.clipboard.writeText(text);
+    else alert('Copy feature is not supported by your browser');
+}
+
 function HomePage() {
  const MAX_FILE_SIZE = 2; //MB
- const [file, setFile] = useState<Blob>();
+ const [file, setFile] = useState<File>();
  const [convertedJson, setConvertedJson] = useState(null);
 
     //TODO:: Define type
@@ -30,11 +36,17 @@ function HomePage() {
       event.target.reset();
     }
 
-    //TODO:: Define type
-    const handleFileOnChange = (event: any) => {
-      const fileSize = event.target.files[0].size;
-      if (bytesToMegaByte(fileSize) > MAX_FILE_SIZE) alert('File size should not be greater then 2 MB :( ');
-      setFile(event.target.files[0]);
+    const handleFileOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+      if (!event.target.files) return;
+      const inputFile = event.target.files.item(0);
+      if (!inputFile) return;
+      const { size } = inputFile;
+      if (bytesToMegaByte(size) > MAX_FILE_SIZE) alert('File size should not be greater then 2 MB :( ');
+      setFile(inputFile);
+    }
+
+    const handleOnCopyClick = () => {
+        copyToClipBoard(convertedJson);
     }
 
     return (
@@ -82,6 +94,18 @@ function HomePage() {
                                   <Button variant='contained' component='span'>
                                       Upload CSV
                                   </Button>
+                                  {
+                                      file && (
+                                          <Typography
+                                              sx={{
+                                                  marginLeft: 2,
+                                                  display: 'inline-block',
+                                              }}>
+                                              {file.name}
+                                          </Typography>
+                                      )
+                                  }
+
                               </label>
                           </Grid>
                           <Grid
@@ -105,15 +129,28 @@ function HomePage() {
 
               {
                   convertedJson && (
-                      <Paper
-                          sx={{
-                              overflow: 'scroll',
-                              marginTop: 2,
-                              padding: 2,
-                          }}
-                      >
-                          <JSONPretty id='json-pretty' data={convertedJson} />
-                      </Paper>
+                      <>
+                          <Paper
+                              sx={{
+                                  overflow: 'scroll',
+                                  marginTop: 2,
+                                  maxHeight: '400px',
+                              }}
+                          >
+                              <JSONPretty id='json-pretty' data={convertedJson} />
+                          </Paper>
+
+                          <Button
+                              type='button'
+                              variant='contained'
+                              sx={{
+                                  marginTop: 2,
+                              }}
+                              onClick={handleOnCopyClick}
+                          >
+                              Copy
+                          </Button>
+                      </>
                   )
               }
           </Container>
