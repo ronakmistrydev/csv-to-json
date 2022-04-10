@@ -1,7 +1,6 @@
-import { Blob } from 'buffer';
-import {Box, Button, Container, Grid, Paper, Typography} from '@mui/material';
+import { Box, Button, Container, Grid, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {ChangeEvent, useState} from 'react';
+import { ChangeEvent, useState } from 'react';
 import JSONPretty from 'react-json-pretty';
 
 const Input = styled('input')({
@@ -21,12 +20,10 @@ function HomePage() {
  const [file, setFile] = useState<File>();
  const [convertedJson, setConvertedJson] = useState(null);
 
-    //TODO:: Define type
     const handleOnSubmit = async (event: any) => {
       event.preventDefault();
       const data = new FormData();
-      // @ts-ignore
-      data.append('file', file as Blob);
+      data.append('file', file as Blob, file?.name);
 
       const response = await fetch('/api/csv-to-json', { method: 'POST', body: data })
           .then((data) => data.json())
