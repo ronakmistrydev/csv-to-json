@@ -8,6 +8,8 @@ const Input = styled('input')({
     display: 'none',
 });
 
+const bytesToMegaByte = (bytes: number) => (bytes/1024)/1024;
+
 function HomePage() {
  const MAX_FILE_SIZE = 2; //MB
  const [file, setFile] = useState<Blob>();
@@ -26,8 +28,6 @@ function HomePage() {
       setConvertedJson(response);
       event.target.reset();
     }
-
-    const bytesToMegaByte = (bytes: number) => (bytes/1024)/1024;
 
     //TODO:: Define type
     const handleFileOnChange = (event: any) => {
